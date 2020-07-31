@@ -1,5 +1,38 @@
-class Score { }
-class Food { 
+interface Scoreable{
+  readonly totalScore: number;
+  render(): void;
+}
+
+interface Foodable{
+  element:HTMLDivElement;
+  clickEventHandler(): void;
+}
+
+interface Foodsable{
+  elements: NodeListOf<HTMLDivElement>;
+  readonly activeElements: HTMLDivElement[];
+  readonly activeElementsScore: number[];
+}
+
+class Score implements Scoreable { 
+  private static instance: Score;
+  get totalScore(){
+    const foods = Foods.getInstance();
+    return foods.activeElementsScore.reduce((total, score) => total + score, 0) 
+  }
+  render(){
+    document.querySelector('.score__number')!.textContent = String(this.totalScore);
+  }
+  private constructor(){}
+  static getInstance(){
+    if(!Score.instance){
+      Score.instance = new Score();
+    }
+    return Score.instance;
+  }
+}
+
+class Food implements Foodable { 
   constructor(public element: HTMLDivElement){
     //bindを使うことによって(this)はクラス内のthisと定義する。
   element.addEventListener('click', this.clickEventHandler.bind(this))
@@ -7,13 +40,18 @@ class Food {
 
   clickEventHandler() {
     this.element.classList.toggle('food--active');
+    const score = Score.getInstance();
+    score.render();
   }
 }
 
-class Foods { 
+class Foods implements Foodsable { 
+  private static instance: Foods;
   elements = document.querySelectorAll<HTMLDivElement>('.food');
+  
   private _activeElements: HTMLDivElement[] = [];
   private _activeElementsScore: number[] = [];
+
   get activeElements(){
     this._activeElements = [];
     this.elements.forEach(element => {
@@ -23,6 +61,7 @@ class Foods {
     })
     return this._activeElements;
   }
+
   get activeElementsScore() {
     this._activeElementsScore = [];
     this.activeElements.forEach(element => {
@@ -32,13 +71,21 @@ class Foods {
       }
     })
     return this._activeElementsScore;
-
   }
-  constructor(){
+
+  private  constructor(){
     this.elements.forEach(element => {
     new Food(element);
     })
   }
+
+  static getInstance(){
+    if(!Foods.instance){
+      Foods.instance = new Foods();
+    }
+    return Foods.instance;
+  }
+  
 }
 
-const foods = new Foods();
+const foods = Foods.getInstance();
