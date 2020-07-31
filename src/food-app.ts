@@ -32,6 +32,7 @@ class Score implements Scoreable {
   }
 }
 
+
 class Food implements Foodable { 
   constructor(public element: HTMLDivElement){
     //bindを使うことによって(this)はクラス内のthisと定義する。
@@ -44,6 +45,7 @@ class Food implements Foodable {
     score.render();
   }
 }
+
 
 class Foods implements Foodsable { 
   private static instance: Foods;
@@ -61,7 +63,6 @@ class Foods implements Foodsable {
     })
     return this._activeElements;
   }
-
   get activeElementsScore() {
     this._activeElementsScore = [];
     this.activeElements.forEach(element => {
@@ -72,20 +73,17 @@ class Foods implements Foodsable {
     })
     return this._activeElementsScore;
   }
-
   private  constructor(){
     this.elements.forEach(element => {
     new Food(element);
     })
   }
-
   static getInstance(){
     if(!Foods.instance){
       Foods.instance = new Foods();
     }
     return Foods.instance;
-  }
-  
+  } 
 }
 
 const foods = Foods.getInstance();
