@@ -24,7 +24,7 @@ body {
   display: flex;
   font-size: 1.5rem;
   margin: 0.5rem;
-  opacity: 0.5;
+  opacity: 0.7;
   padding: 1rem;
 }
 .food:hover {
